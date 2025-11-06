@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import 'bulma/css/bulma.css';
 import './App.scss';
 
@@ -30,7 +30,9 @@ function getPreparedGoods(
 
   if (sortField === SortType.ALPHABETICAL) {
     preparedGoods.sort((a, b) => a.localeCompare(b));
-  } else if (sortField === SortType.LENGTH) {
+  }
+
+  if (sortField === SortType.LENGTH) {
     preparedGoods.sort((a, b) => a.length - b.length);
   }
 
@@ -45,7 +47,10 @@ export const App: React.FC = () => {
   const [sortField, setSortField] = useState<SortType>(SortType.DEFAULT);
   const [isReversed, setIsReversed] = useState<boolean>(false);
 
-  const visibleGoods = getPreparedGoods(goodsFromServer, sortField, isReversed);
+  const visibleGoods = useMemo(
+    () => getPreparedGoods(goodsFromServer, sortField, isReversed),
+    [sortField, isReversed],
+  );
 
   const handleSortByName = () => setSortField(SortType.ALPHABETICAL);
   const handleSortByLength = () => setSortField(SortType.LENGTH);
